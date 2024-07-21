@@ -47,18 +47,18 @@ app.post('/api/short', async (c) => {
   }
 })
 
-app.get('/api/get', async (c) => {
-  const keyy = c.req.query('q')
+app.get('/:key', async (c) => {
+  const keyy = c.req.param('key')
   if (keyy !== undefined) {
   const key = encodeURIComponent(keyy)
     const value = await c.env.KANADE.get(key,{type:"text"})
     if (value === null) {
-      return c.json<GetUrlResponse>({ success: false ,error:"undefined key"})
+	return c.notFound()
     } else {
-      return c.json<GetUrlResponse>({ success: true, url: value })
+	    return c.redirect(value,301)
     }
   }else {
-	  return c.json<GetUrlResponse>({success:false, error:"query is not deined"})
+	  return c.notFound()
   }
 })
 	
