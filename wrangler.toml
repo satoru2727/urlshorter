@@ -1,0 +1,20 @@
+name = "app"
+compatibility_date = "2024-07-21"
+
+[[kv_namespaces]]
+binding = "KANADE"
+id = "80073ededca84d81818c6e38d3cc0035"
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""
+
+# [ai]
+# binding = "AI"
