@@ -157,6 +157,26 @@ app.get("/", (c) => {
             </form>
         </div>
     </div>
+    <h2>About</h2>
+    <p>このサービスは日本語URL短縮サービスです。</p>
+    <h2>API</h2>
+    <p>URL短縮に利用できるAPIを提供しています</p>
+    <p>urlフィールドは必須です。keyフィールドがない場合、短縮URLはランダムに決定されます。</p>
+    <h3>リクエスト</h3>
+    <code>
+    POST https://xn--s7y.xn--tckwe/api/short
+    {
+      "url":"https://example.com"
+      "key":"あいうえお"
+    }
+    </code>
+    <h3>レスポンス</h3>
+    <code>
+    {
+      "success":"true"
+      "key":"https://xn--s7y.xn--tckwe/あいうえお"
+    }
+    </code>
 </body>
 </html>`,
 	);
