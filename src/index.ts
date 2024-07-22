@@ -1,18 +1,23 @@
+import type { KVNamespace } from "@cloudflare/workers-types";
 import { Hono } from "hono";
-import { KVNamespace } from "@cloudflare/workers-types";
 import { html } from "hono/html";
 import { secureHeaders } from "hono/secure-headers";
+import { validator } from "hono/validator";
 import { z } from "zod";
-
+const schema = z.object({
+	url: z.string().url(),
+	key: z.string().max(30).min(2).nullish(),
+	length: z.number().lte(30).gte(2).nullish(),
+});
 type Bindings = {
 	KANADE: KVNamespace;
 };
 
-function generateRandomHiragana(): string {
+function generateRandomHiragana(length: number): string {
 	const hiragana =
 		"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
 	let result = "";
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < length; i++) {
 		const randomIndex = Math.floor(Math.random() * hiragana.length);
 		result += hiragana[randomIndex];
 	}
@@ -39,6 +44,10 @@ app.get("/", (c) => {
           <div>
             <label>URL</label>
             <input type='url' name='url' required />
+	    <label>文字数</label>
+	    <input value="4" type='number' name='length' />
+	    <label>カスタム文字列</label>
+	    <input name="key" type="text" maxlength="30" minlength="2">
             <button>短縮</button>
           </div>
         </form>
@@ -47,34 +56,54 @@ app.get("/", (c) => {
 	);
 });
 
-app.post("/api/short", async (c) => {
-	const body: { url: string; key: string } = await c.req.json();
-	const url = encodeURI(body.url);
-	const key = body.key;
-	const check: string | null = await c.env.KANADE.get(key);
-	if (check === null) {
-		await c.env.KANADE.put(key, url);
-		const shorten = `https://xn--s7y.xn--tckwe/${key}`;
-		return c.json({ success: true, shortend: shorten });
-	} else {
+app.post(
+	"/api/short",
+	validator("json", (value, c) => {
+		const parsed = schema.safeParse(value);
+		if (!parsed.success) {
+			return c.text("Invalid!", 401);
+		}
+		return parsed.data;
+	}),
+	async (c) => {
+		const body = c.req.valid("json");
+		const url = encodeURI(body.url);
+		const length = body.length ?? 4;
+		const key = body.key ?? generateRandomHiragana(length);
+		const check: string | null = await c.env.KANADE.get(key);
+		if (check === null) {
+			await c.env.KANADE.put(key, url);
+			const shorten = `https://xn--s7y.xn--tckwe/${key}`;
+			return c.json({ success: true, shortend: shorten });
+		}
 		return c.json({ success: false, key: "" });
-	}
-});
+	},
+);
 
-app.post("/short", async (c) => {
-	const Body = await c.req.parseBody();
-	const url2 = encodeURI(Body.url as string);
-	const hiragana = generateRandomHiragana();
-	const key = encodeURIComponent(hiragana);
-	const check: string | null = await c.env.KANADE.get(key);
+app.post(
+	"/short",
+	validator("form", (value, c) => {
+		const parsed = schema.safeParse(value);
+		if (!parsed.success) {
+			return c.text("Invalid!", 401);
+		}
+		return parsed.data;
+	}),
+	async (c) => {
+		const body = c.req.valid("form");
+		const url = encodeURI(body.url as string);
+		const length = body.length ?? 4;
+		const hiragana = generateRandomHiragana(length);
+		const key = body.key ?? encodeURIComponent(hiragana);
+		const check: string | null = await c.env.KANADE.get(key);
 
-	if (check === null) {
-		await c.env.KANADE.put(key, url2);
-		const decoded = decodeURIComponent(key);
-		const me = new URL(`/${key}`, "https://xn--s7y.xn--tckwe");
-		const you = `https://短.コム/${decoded}`;
-		return c.html(
-			html`
+		if (check === null) {
+			await c.env.KANADE.put(key, url);
+			const decoded = decodeURIComponent(key);
+			const me = new URL(`/${key}`, "https://xn--s7y.xn--tckwe");
+			const you = `https://短.コム/${decoded}`;
+			return c.html(
+				html`
       <html>
         <head>
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
@@ -94,11 +123,11 @@ app.post("/short", async (c) => {
           }
         </script>
       </html>`,
-		);
-	} else {
+			);
+		}
 		return c.json({ success: false });
-	}
-});
+	},
+);
 
 app.get("/:key", async (c) => {
 	const keyy = c.req.param("key");
@@ -107,12 +136,10 @@ app.get("/:key", async (c) => {
 		const value: string | null = await c.env.KANADE.get(key, { type: "text" });
 		if (value === null) {
 			return c.notFound();
-		} else {
-			return c.redirect(value, 301);
 		}
-	} else {
-		return c.notFound();
+		return c.redirect(value, 301);
 	}
+	return c.notFound();
 });
 
 export default app;
