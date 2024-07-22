@@ -30,7 +30,7 @@ app.use(secureHeaders());
 
 app.get("/", (c) => {
 	return c.html(
-		html`<!doctype html>
+		html`
 		<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -39,20 +39,20 @@ app.get("/", (c) => {
     <title>短.コム</title>
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --input-bg: #f0f0f0;
-            --button-bg: #4CAF50;
-            --button-text: #ffffff;
+            --bg-color: #FFF8F3;
+            --text-color: #405D72;
+            --input-bg: #F7E7DC;
+            --button-bg: #758694;
+            --button-text: #FFF8F3;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #333333;
-                --text-color: #ffffff;
-                --input-bg: #555555;
-                --button-bg: #45a049;
-                --button-text: #ffffff;
+                --bg-color: #405D72;
+                --text-color: #FFF8F3;
+                --input-bg: #758694;
+                --button-bg: #F7E7DC;
+                --button-text: #405D72;
             }
         }
 
@@ -77,7 +77,7 @@ app.get("/", (c) => {
         }
 
         .form-section {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(117, 134, 148, 0.1);
             padding: 20px;
             border-radius: 5px;
         }
@@ -98,7 +98,7 @@ app.get("/", (c) => {
 
         input {
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #758694;
             border-radius: 4px;
             background-color: var(--input-bg);
             color: var(--text-color);
@@ -158,7 +158,7 @@ app.get("/", (c) => {
         </div>
     </div>
 </body>
-    </html>`,
+</html>`,
 	);
 });
 
