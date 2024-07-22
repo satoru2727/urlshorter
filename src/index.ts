@@ -217,24 +217,24 @@ const key = encodeURIComponent(body.key || generateRandomHiragana(length));
     <title>URL生成結果</title>
     <style>
       :root {
-        --bg-color: #ffffff;
-        --text-color: #333333;
-        --input-bg: #f0f0f0;
-        --button-bg: #4CAF50;
-        --button-text: #ffffff;
-        --notification-bg: #4CAF50;
-        --notification-text: #ffffff;
+        --bg-color: #FFF8F3;
+        --text-color: #405D72;
+        --input-bg: #F7E7DC;
+        --button-bg: #758694;
+        --button-text: #FFF8F3;
+        --notification-bg: #758694;
+        --notification-text: #FFF8F3;
       }
 
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg-color: #333333;
-          --text-color: #ffffff;
-          --input-bg: #555555;
-          --button-bg: #45a049;
-          --button-text: #ffffff;
-          --notification-bg: #45a049;
-          --notification-text: #ffffff;
+          --bg-color: #405D72;
+          --text-color: #FFF8F3;
+          --input-bg: #758694;
+          --button-bg: #F7E7DC;
+          --button-text: #405D72;
+          --notification-bg: #F7E7DC;
+          --notification-text: #405D72;
         }
       }
 
@@ -268,7 +268,7 @@ const key = encodeURIComponent(body.key || generateRandomHiragana(length));
       input[type="text"] {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 1px solid #758694;
         border-radius: 4px;
         background-color: var(--input-bg);
         color: var(--text-color);
