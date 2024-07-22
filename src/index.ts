@@ -6,8 +6,8 @@ import { validator } from "hono/validator";
 import { z } from "zod";
 const schema = z.object({
 	url: z.string().url(),
-	key: z.string().max(30).min(2).nullish(),
-	length: z.number().lte(30).gte(2).nullish(),
+	key: z.union([z.literal(""), z.string().min(2).max(30)]).nullish(),
+	length: z.union([z.literal(0), z.number().int().min(2).max(30)]).nullish(),
 });
 type Bindings = {
 	KANADE: KVNamespace;
@@ -68,8 +68,8 @@ app.post(
 	async (c) => {
 		const body = c.req.valid("json");
 		const url = encodeURI(body.url);
-		const length = body.length ?? 4;
-		const key = body.key ?? generateRandomHiragana(length);
+		const length = body.length || 4;
+		const key = body.key || generateRandomHiragana(length);
 		const check: string | null = await c.env.KANADE.get(key);
 		if (check === null) {
 			await c.env.KANADE.put(key, url);
@@ -91,10 +91,9 @@ app.post(
 	}),
 	async (c) => {
 		const body = c.req.valid("form");
-		const url = encodeURI(body.url as string);
-		const length = body.length ?? 4;
-		const hiragana = generateRandomHiragana(length);
-		const key = body.key ?? encodeURIComponent(hiragana);
+		const url: string = encodeURI(body.url);
+		const length = body.length || 4;
+const key = body.key || generateRandomHiragana(length);
 		const check: string | null = await c.env.KANADE.get(key);
 
 		if (check === null) {
@@ -118,7 +117,7 @@ app.post(
         </body>
         <script>
           function copyButton(elementId: string) {
-            var element = document.getElementById(elementId) as HTMLInputElement;
+            var element = document.getElementById(elementId);
             navigator.clipboard.writeText(element.value)
           }
         </script>
