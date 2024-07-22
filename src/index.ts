@@ -134,7 +134,7 @@ app.get("/", (c) => {
     </style>
 </head>
 <body>
-    <h1>URL短縮サービス</h1>
+    <h1>短.コム</h1>
     <div class="container">
         <div class="form-section">
             <h2>ランダム文字列</h2>
