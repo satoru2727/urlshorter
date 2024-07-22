@@ -1,5 +1,8 @@
 name = "app"
 compatibility_date = "2024-07-21"
+routes = [
+	{ pattern = "xn--s7y.xn--tckwe", custom_domain = true }
+]
 
 [[kv_namespaces]]
 binding = "KANADE"
